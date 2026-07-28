@@ -1,4 +1,4 @@
-# PLANEKS AI Engineering Standard
+# PLANEKS AI Engineering Standards
 
 AI can read code, propose solutions, change files and run local commands. But **the engineer always owns the result**.
 
@@ -209,8 +209,6 @@ The reviewer checks:
 * Use the expensive model for complex planning, debugging and security tasks. Use the cheaper one for documentation, search, boilerplate and simple tests.
 * Do not feed in the whole repository when a few files are enough.
 * Do not run several agents on the same task without a clear benefit.
-* The developer is responsible for the subscription and/or token budget they use.
-* The tech lead selects tools and settings to minimize costs and runs usage training.
 
 ## AI extensions, skills and settings
 
@@ -262,11 +260,6 @@ For a pilot tool it is enough to define an owner, the pilot team, the allowed re
 * Runs regular training.
 * Maintains the approved tools list.
 
-### Tech lead + Management Team
-
-* Approves providers and integrations.
-* Manages access and incident response.
-
 ## Metrics
 
 At the first stage four indicators are enough:
@@ -288,13 +281,5 @@ We do not use the number of generated lines, prompts or AI PRs to evaluate an em
 * Generated tests can repeat the implementation's mistaken assumptions.
 * A large AI-generated diff can take more review time than a manual change.
 * AI does not replace code review, QA, security, performance or accessibility testing.
-
-## Where everything lives
-
-* The policy — in the engineering handbook (xwiki).
-* The approved tools and budgets list — in a version-controlled registry.
-* Project AI instructions — in the corresponding repositories.
-* Shared skills and settings — in a separate managed repository.
-* Recommended integrations — in the corporate boilerplates.
 
 CLAUDE.md, AGENTS.md and similar files must contain only stable project rules: setup/test/lint commands, architectural boundaries and forbidden actions. They hold no secrets and no context of an individual task. Changes to these files go through the normal PR review.
