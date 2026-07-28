@@ -1,0 +1,101 @@
+# Project command policy translated from .claude/settings.json.
+#
+# Rules apply when Codex evaluates commands for execution outside the sandbox.
+# The most restrictive matching decision wins.
+
+# Read-only development and repository inspection.
+prefix_rule(pattern = ["docker", "--version"], decision = "allow")
+prefix_rule(pattern = ["docker", "compose", "-f", "compose.dev.yml", "config"], decision = "allow")
+prefix_rule(pattern = ["docker", "compose", "-f", "compose.dev.yml", "logs"], decision = "allow")
+prefix_rule(pattern = ["docker", "compose", "-f", "compose.dev.yml", "ps"], decision = "allow")
+prefix_rule(pattern = ["git", "branch"], decision = "allow")
+prefix_rule(pattern = ["git", "diff"], decision = "allow")
+prefix_rule(pattern = ["git", "log"], decision = "allow")
+prefix_rule(pattern = ["git", "rev-parse"], decision = "allow")
+prefix_rule(pattern = ["git", "show"], decision = "allow")
+prefix_rule(pattern = ["git", "status"], decision = "allow")
+prefix_rule(pattern = [["grep", "ls", "pwd"]], decision = "allow")
+prefix_rule(pattern = [["node", "python", "python3"], "--version"], decision = "allow")
+
+# Repository quality gates. AGENTS.md still requires these to run through
+# compose.dev.yml where applicable.
+prefix_rule(pattern = ["docker", "compose", "-f", "compose.dev.yml", "exec", "django", "python", "manage.py", "makemigrations", "--check", "--dry-run"], decision = "allow")
+prefix_rule(pattern = ["docker", "compose", "-f", "compose.dev.yml", "exec", "django", "python", "manage.py", "migrate", "--check"], decision = "allow")
+prefix_rule(pattern = ["docker", "compose", "-f", "compose.dev.yml", "exec", "django", "ruff"], decision = "allow")
+prefix_rule(pattern = ["docker", "compose", "-f", "compose.dev.yml", "exec", "frontend", "npm", "run", ["build", "format:check", "lint"]], decision = "allow")
+prefix_rule(pattern = ["docker", "compose", "-f", "compose.dev.yml", "exec", "frontend", "npm", "test"], decision = "allow")
+prefix_rule(pattern = ["docker", "compose", "-f", "compose.dev.yml", "run", "--rm", "django", "test"], decision = "allow")
+prefix_rule(pattern = ["docker", "compose", "-f", "compose.dev.yml", "run", "--rm", "frontend", "npm", "test"], decision = "allow")
+prefix_rule(pattern = ["pre-commit", "run"], decision = "allow")
+
+# Production, destructive, backup, and deployment operations remain blocked.
+prefix_rule(
+    pattern = [["ansible", "ansible-playbook"]],
+    decision = "forbidden",
+    justification = "Run infrastructure operations through the approved deployment workflow.",
+)
+prefix_rule(
+    pattern = ["docker", "compose", "-f", "compose.prod.yml"],
+    decision = "forbidden",
+    justification = "Production Compose commands must not run from a developer machine.",
+)
+prefix_rule(
+    pattern = ["docker", "compose", "-f", ["compose.dev.yml", "compose.prod.yml"], "down", "-v"],
+    decision = "forbidden",
+    justification = "This command deletes persistent Docker volumes; perform it manually only after explicit confirmation.",
+)
+prefix_rule(
+    pattern = ["git", "clean"],
+    decision = "forbidden",
+    justification = "Use a targeted, recoverable cleanup instead of git clean.",
+)
+prefix_rule(
+    pattern = ["git", "push", "--force"],
+    decision = "forbidden",
+    justification = "Force-pushing is prohibited by repository policy.",
+)
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "forbidden",
+    justification = "Use a non-destructive Git operation that preserves local work.",
+)
+prefix_rule(
+    pattern = [["scripts/backup.sh", "./scripts/backup.sh"]],
+    decision = "forbidden",
+    justification = "Backup scripts must not run from an AI coding session.",
+)
+prefix_rule(
+    pattern = ["bash", ["scripts/backup.sh", "./scripts/backup.sh"]],
+    decision = "forbidden",
+    justification = "Backup scripts must not run from an AI coding session.",
+)
+prefix_rule(
+    pattern = [["scripts/deploy.sh", "./scripts/deploy.sh"]],
+    decision = "forbidden",
+    justification = "Deployments run through CI, never from a developer machine.",
+)
+prefix_rule(
+    pattern = ["bash", ["scripts/deploy.sh", "./scripts/deploy.sh"]],
+    decision = "forbidden",
+    justification = "Deployments run through CI, never from a developer machine.",
+)
+prefix_rule(
+    pattern = [["scripts/init_production_volumes.sh", "./scripts/init_production_volumes.sh"]],
+    decision = "forbidden",
+    justification = "Production volume initialization must not run from a developer machine.",
+)
+prefix_rule(
+    pattern = ["bash", ["scripts/init_production_volumes.sh", "./scripts/init_production_volumes.sh"]],
+    decision = "forbidden",
+    justification = "Production volume initialization must not run from a developer machine.",
+)
+prefix_rule(
+    pattern = [["scripts/provision-server.sh", "./scripts/provision-server.sh"]],
+    decision = "forbidden",
+    justification = "Server provisioning must run through the approved infrastructure workflow.",
+)
+prefix_rule(
+    pattern = ["bash", ["scripts/provision-server.sh", "./scripts/provision-server.sh"]],
+    decision = "forbidden",
+    justification = "Server provisioning must run through the approved infrastructure workflow.",
+)

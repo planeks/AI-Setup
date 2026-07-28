@@ -1,0 +1,14 @@
+# Project-scoped Codex settings. Codex loads this file only after the
+# repository has been trusted.
+
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+allow_login_shell = false
+
+[sandbox_workspace_write]
+network_access = false
+
+[mcp_servers.spotlight]
+command = "npx"
+args = ["-y", "--prefer-online", "@spotlightjs/spotlight@latest", "mcp"]
+enabled = true
