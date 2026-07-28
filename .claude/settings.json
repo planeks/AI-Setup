@@ -1,0 +1,150 @@
+{
+  "env": {
+    "ENABLE_TOOL_SEARCH": "true"
+  },
+  "enabledMcpjsonServers": [
+    "spotlight"
+  ],
+  "includeCoAuthoredBy": false,
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "$CLAUDE_PROJECT_DIR/.claude/statusline.sh"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/caveman-session-flag.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/caveman-session-flag.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(docker --version:*)",
+      "Bash(docker compose -f compose.dev.yml config:*)",
+      "Bash(docker compose -f compose.dev.yml exec django python manage.py makemigrations --check --dry-run:*)",
+      "Bash(docker compose -f compose.dev.yml exec django python manage.py migrate --check:*)",
+      "Bash(docker compose -f compose.dev.yml exec django ruff:*)",
+      "Bash(docker compose -f compose.dev.yml exec frontend npm run build:*)",
+      "Bash(docker compose -f compose.dev.yml exec frontend npm run format\\:check:*)",
+      "Bash(docker compose -f compose.dev.yml exec frontend npm run lint:*)",
+      "Bash(docker compose -f compose.dev.yml exec frontend npm test:*)",
+      "Bash(docker compose -f compose.dev.yml logs:*)",
+      "Bash(docker compose -f compose.dev.yml ps:*)",
+      "Bash(docker compose -f compose.dev.yml run --rm django test:*)",
+      "Bash(docker compose -f compose.dev.yml run --rm frontend npm test:*)",
+      "Bash(git branch:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git show:*)",
+      "Bash(git status:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(node --version:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run format\\:check:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm test:*)",
+      "Bash(pre-commit run:*)",
+      "Bash(pwd:*)",
+      "Bash(python --version:*)",
+      "Bash(python3 --version:*)",
+      "Bash(ruff check:*)",
+      "Bash(ruff format --check:*)",
+      "WebFetch(domain:caddyserver.com)",
+      "WebFetch(domain:developer.mozilla.org)",
+      "WebFetch(domain:docs.ansible.com)",
+      "WebFetch(domain:docs.astral.sh)",
+      "WebFetch(domain:docs.celeryq.dev)",
+      "WebFetch(domain:docs.djangoproject.com)",
+      "WebFetch(domain:docs.docker.com)",
+      "WebFetch(domain:docs.github.com)",
+      "WebFetch(domain:docs.gunicorn.org)",
+      "WebFetch(domain:docs.pytest.org)",
+      "WebFetch(domain:docs.python.org)",
+      "WebFetch(domain:docs.sentry.io)",
+      "WebFetch(domain:drf-spectacular.readthedocs.io)",
+      "WebFetch(domain:eslint.org)",
+      "WebFetch(domain:prettier.io)",
+      "WebFetch(domain:pytest-django.readthedocs.io)",
+      "WebFetch(domain:python-poetry.org)",
+      "WebFetch(domain:react.dev)",
+      "WebFetch(domain:redis.io)",
+      "WebFetch(domain:spotlightjs.com)",
+      "WebFetch(domain:testing-library.com)",
+      "WebFetch(domain:vite.dev)",
+      "WebFetch(domain:vitest.dev)",
+      "WebFetch(domain:www.django-rest-framework.org)",
+      "WebFetch(domain:www.i18next.com)",
+      "WebFetch(domain:www.mkdocs.org)",
+      "WebFetch(domain:www.postgresql.org)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./ansible/.env.ansible)",
+      "Read(./backups/**)",
+      "Bash(ansible:*)",
+      "Bash(ansible-playbook:*)",
+      "Bash(docker compose -f compose.prod.yml:*)",
+      "Bash(docker compose * down -v:*)",
+      "Bash(git clean:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(scripts/backup.sh:*)",
+      "Bash(./scripts/backup.sh:*)",
+      "Bash(bash scripts/backup.sh:*)",
+      "Bash(scripts/deploy.sh:*)",
+      "Bash(./scripts/deploy.sh:*)",
+      "Bash(bash scripts/deploy.sh:*)",
+      "Bash(scripts/init_production_volumes.sh:*)",
+      "Bash(./scripts/init_production_volumes.sh:*)",
+      "Bash(bash scripts/init_production_volumes.sh:*)",
+      "Bash(scripts/provision-server.sh:*)",
+      "Bash(./scripts/provision-server.sh:*)",
+      "Bash(bash scripts/provision-server.sh:*)"
+    ]
+  },
+  "enabledPlugins": {
+    "code-review@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "caveman@caveman": true
+  },
+  "plansDirectory": "./.claude/plans"
+}
