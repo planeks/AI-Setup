@@ -8,7 +8,13 @@ MCP servers run separately from the AI assistant. Only enable servers you trust,
 
 ## Configured MCP server
 
-This repository defines its MCP servers in the root-level [`.mcp.json`](../.mcp.json) file. It currently configures one server:
+This repository defines MCP servers in two client-specific project files:
+
+- [`.mcp.json`](../.mcp.json) for Claude Code and other compatible clients.
+- [`.codex/config.toml`](../.codex/config.toml) for Codex CLI, the Codex IDE
+  extension, and the ChatGPT desktop app.
+
+Both files currently configure one server:
 
 ### Spotlight
 
@@ -22,4 +28,6 @@ npx -y --prefer-online @spotlightjs/spotlight@latest mcp
 
 This command downloads the latest Spotlight package when needed and starts it in MCP mode. Node.js and `npx` must therefore be available on the developer machine.
 
-A compatible MCP client should discover the server from `.mcp.json`. The exact setup and approval flow depend on the editor or AI tool being used.
+Codex loads `.codex/config.toml` only after the repository is trusted. Other
+compatible MCP clients should discover the server from `.mcp.json`. The exact
+setup and approval flow depend on the editor or AI tool being used.
