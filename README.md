@@ -6,7 +6,8 @@ AI agent configuration for PLANEKS projects: the company engineering standard pl
 
 | Path | What it is |
 |---|---|
-| `AI-ENGINEERING-STANDARD.md` | PLANEKS AI Engineering Standard. Company rules for working with AI: risk levels, security, prompting, PR flow, accountability, metrics. |
+| `AI-DEVELOPER-MANIFESTO.md` | The AI Developer Manifesto. What the developer's role is when AI writes the code: principles, responsibility, what we do not accept. |
+| `AI-ENGINEERING-STANDARDS.md` | PLANEKS AI Engineering Standards. Company rules for working with AI: risk levels, security, prompting, PR flow, accountability, metrics. |
 | `AGENTS.md`, `src/AGENTS.md`, `src/frontend/AGENTS.md` | Tool-agnostic project rules (root, backend, frontend). The boilerplate's source of truth for any coding agent. |
 | `CLAUDE.md` | Claude Code entry point. Imports the three `AGENTS.md` files, points at the vendored standards. |
 | `.agents/skills/` | Twelve task skills in the open Agent Skills format (`django-backend`, `react-frontend`, `verify-change`, `systematic-debugging`, ...). Index in its `README.md`. |
