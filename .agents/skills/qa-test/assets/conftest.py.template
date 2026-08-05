@@ -1,0 +1,33 @@
+# pytest-playwright fixtures dropped in by /qa-test when a Python app has none.
+# Requires:  pip install pytest-playwright  &&  playwright install
+# Run with:  pytest path/ --tracing=retain-on-failure --screenshot=only-on-failure --video=retain-on-failure
+#
+# BASE_URL comes from the environment so the same spec runs locally and in CI.
+import os
+import pytest
+
+
+@pytest.fixture(scope="session")
+def base_url() -> str:
+    # pytest-playwright reads `base_url`; page.goto("/path") then resolves against it.
+    return os.environ.get("BASE_URL", "http://localhost:8000")
+
+
+@pytest.fixture
+def browser_context_args(browser_context_args, base_url):
+    # Reasonable defaults; the skill can extend (locale, viewport, storage_state).
+    return {
+        **browser_context_args,
+        "base_url": base_url,
+        # For logged-in flows, prefer a gitignored storage state over UI login:
+        # "storage_state": os.environ.get("PW_STORAGE_STATE"),
+    }
+
+
+# Credentials for auth flows: read from env, NEVER hard-code in the spec.
+@pytest.fixture
+def test_credentials():
+    return {
+        "email": os.environ.get("QA_TEST_EMAIL"),
+        "password": os.environ.get("QA_TEST_PASSWORD"),
+    }

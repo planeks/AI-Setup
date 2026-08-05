@@ -23,6 +23,7 @@ Each skill is a directory with a `SKILL.md` (YAML frontmatter: `name`, `descript
 | `context-efficient-work` | Gathering only the context a change needs |
 | `concise-engineering-output` | Reporting work to engineers — lead with the conclusion |
 | `systematic-debugging` | Diagnosing a bug rather than guessing a patch |
+| `qa-test` | Acting as a manual-QA engineer: enumerate cases for a feature, drive the app in a browser, write and run a durable `pytest-playwright` spec, triage failures. Ships with its own `install.sh` (Playwright MCP + runner venv) — see its `INSTALL.md` |
 
 ## Maintenance
 

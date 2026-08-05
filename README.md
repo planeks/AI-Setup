@@ -10,7 +10,7 @@ AI agent configuration for PLANEKS projects: the company engineering standard pl
 | `AI-ENGINEERING-STANDARDS.md` | PLANEKS AI Engineering Standards. Company rules for working with AI: risk levels, security, prompting, PR flow, accountability, metrics. |
 | `AGENTS.md`, `src/AGENTS.md`, `src/frontend/AGENTS.md` | Tool-agnostic project rules (root, backend, frontend). The boilerplate's source of truth for any coding agent. |
 | `CLAUDE.md` | Claude Code entry point. Imports the three `AGENTS.md` files, points at the vendored standards. |
-| `.agents/skills/` | Twelve task skills in the open Agent Skills format (`django-backend`, `react-frontend`, `verify-change`, `systematic-debugging`, ...). Index in its `README.md`. |
+| `.agents/skills/` | Thirteen task skills in the open Agent Skills format (`django-backend`, `react-frontend`, `verify-change`, `qa-test`, ...). Index in its `README.md`. |
 | `.claude/skills` | Symlink to `.agents/skills/` so Claude Code discovers the same skills. |
 | `.claude/CLAUDE_*.md` | Vendored company-wide standards: base, python, django, react, architecture. Read on demand, not auto-imported into context. |
 | `.claude/settings.json` | Claude Code permissions (allow/deny lists), plugins, hooks and statusline wiring. |

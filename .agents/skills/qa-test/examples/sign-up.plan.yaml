@@ -1,0 +1,51 @@
+# Example test plan emitted by /qa-test in step 2, BEFORE specs are written.
+# This is the reviewable artifact: `expected` always comes from the ORACLE
+# (the feature's acceptance criteria), never from "what the code currently does".
+feature: sign-up
+url: /signup
+oracle: "Acceptance criteria in JIRA-123: new users register with email+password,
+         get a verification email, and land on /welcome. Weak passwords and
+         duplicate emails are rejected with a visible message."
+
+cases:
+  - id: happy-path
+    priority: high
+    steps:
+      - "go to /signup"
+      - "fill name=Ada, email=ada+{ts}@example.com, password=Str0ng!pass"
+      - "click 'Create account'"
+    expected: "redirected to /welcome; sees banner 'Verify your email'"
+
+  - id: weak-password
+    priority: medium
+    steps:
+      - "go to /signup"
+      - "fill a valid email and password='123'"
+      - "click 'Create account'"
+    expected: "stays on /signup; visible error 'Password is too weak'"
+
+  - id: duplicate-email
+    priority: medium
+    steps:
+      - "register ada@example.com once (fixture/seed)"
+      - "attempt to register ada@example.com again"
+    expected: "visible error 'An account with this email already exists'"
+
+  - id: logged-out-redirect
+    priority: high
+    steps:
+      - "as a logged-out user, deep-link to /dashboard"
+    expected: "redirected to /login; after login, returned to /dashboard"
+
+  # Async backend chain — assert the OBSERVABLE end-state, wait on the signal.
+  - id: verification-email-confirm-endstate
+    priority: high
+    steps:
+      - "register a new user"
+      - "follow the verification link from the email (test inbox / sandbox)"
+      - "return to the app"
+    expected: "account status badge shows 'Verified' within 30s"
+    note: "chain: submit -> create user -> send email -> click link -> webhook/
+           callback flips status -> UI badge. Assert the badge, never the DB.
+           If no test inbox exists in this env, mark provider leg simulated or
+           out of scope (see observable-end-states.md)."
