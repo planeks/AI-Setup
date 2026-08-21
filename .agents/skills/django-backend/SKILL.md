@@ -24,7 +24,7 @@ This project does **not** use a service layer or selectors. Do not introduce `se
 
 ## Rules
 
-- **Permissions**: default auth is JWT (SimpleJWT). DRF has **no default permission configured** (`REST_FRAMEWORK` in `config/settings/base.py` sets no `DEFAULT_PERMISSION_CLASSES`), so it falls back to `AllowAny` — a view without an explicit `permission_classes` is **public**. Always set it. There is **no multi-tenancy / object-level ownership layer** — if a view returns per-user data, filter the queryset by `request.user` yourself. (Note: `accounts/api/permissions.py` is a dead stub importing a non-existent `oxygen` package — do not import from it.)
+- **Permissions**: default auth is JWT (SimpleJWT). DRF has **no default permission configured** (`REST_FRAMEWORK` in `config/settings/base.py` sets no `DEFAULT_PERMISSION_CLASSES`), so it falls back to `AllowAny` — a view without an explicit `permission_classes` is **public**. Always set it. There is **no multi-tenancy / object-level ownership layer** — if a view returns per-user data, filter the queryset by `request.user` yourself.
 - **OpenAPI**: annotate every view with drf-spectacular `@extend_schema` / `@extend_schema_view` so the generated schema stays accurate. See `api-contract-change` when a request/response shape changes.
 - **Transactions, `select_for_update`, N+1, migrations**: see [references/backend-conventions.md](references/backend-conventions.md). None of these patterns exist in the repo yet — the reference gives the rules to follow when you add write-heavy or list endpoints.
 

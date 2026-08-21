@@ -178,7 +178,6 @@ Each app has **two distinct presentation surfaces**, kept in separate modules so
 - Tasks must be idempotent — they will retry.
 - Pass IDs, not ORM objects (objects can be stale or unpickleable). Refetch inside the task.
 - Set explicit `time_limit` and `soft_time_limit`. Configure retries with backoff.
-- Use **Redis** as broker by default; **RabbitMQ** when ordering/durability requires it.
 
 ## Caching
 

@@ -43,9 +43,9 @@ That is why a gross violation (leaking secrets or production data, bypassing con
 
 **R8. Know when to stop.** After 2–3 failed attempts, or when a product, architecture or security decision comes up, stop the agent and ask a human.
 
-**R9. Hide nothing.** In the PR, list tests that did not run, assumptions, known risks and unfinished parts.
+**R9. Hide nothing.** Document untested functionality, assumptions, known risks, and unfinished parts.
 
-**R10. AI does not review itself.** A human reviews the final diff; the agent does not approve or merge its own change.
+**R10. AI does not make the final decision.** A human reviews the final diff; the agent does not approve or merge its own change.
 
 ## Allowed usage — what agents do, what we do by hand
 
@@ -127,11 +127,11 @@ Self-reporting is not punished; a leak through negligence, or concealment, falls
 
 For most tasks this template is enough:
 
-**`Goal`**`: what needs to be done.`  
-**`Context`**`: the task and the relevant files.`  
-**`Acceptance criteria`**`: how to know the result is correct.`  
-**`Constraints`**`: what must not be changed.`  
-**`Verification`**`: which commands or scenarios to run.`  
+**`Goal`**`: what needs to be done.`
+**`Context`**`: the task and the relevant files.`
+**`Acceptance criteria`**`: how to know the result is correct.`
+**`Constraints`**`: what must not be changed.`
+**`Verification`**`: which commands or scenarios to run.`
 
 Plan mode is required if a change:
 
@@ -146,19 +146,19 @@ A task is simple if you can name the files that will change in advance, the impl
 
 Example of a simple task:
 
-**`Goal`**`: add a status filter to the order list.`  
-**`Context`**`: orders/views.py, orders/filters.py; date filters already exist, follow the same pattern.`  
-**`Acceptance criteria`**`: GET /api/orders/?status=paid returns only paid orders; an invalid status returns 400.`  
-**`Constraints`**`: do not touch the serializers or the model.`  
-**`Verification`**`: pytest orders/tests/test_filters.py, manual check.`  
+**`Goal`**`: add a status filter to the order list.`
+**`Context`**`: orders/views.py, orders/filters.py; date filters already exist, follow the same pattern.`
+**`Acceptance criteria`**`: GET /api/orders/?status=paid returns only paid orders; an invalid status returns 400.`
+**`Constraints`**`: do not touch the serializers or the model.`
+**`Verification`**`: pytest orders/tests/test_filters.py, manual check.`
 
 Example of a complex task:
 
-**`Goal`**`: CSV report export with background generation.`  
-**`Context`**`: reports live in reports/, background jobs run on Celery, files are stored in S3. Give a plan first: models, new endpoints, retry logic, what to do with large reports.`  
-**`Acceptance criteria`**`: POST /api/reports/{id}/export/ queues a job and returns 202; the finished file is available via a link with a 24-hour lifetime; a repeated request during generation does not create a duplicate.`  
-**`Constraints`**`: existing report endpoints unchanged; new dependencies only after approval.`  
-**`Verification`**`: pytest reports/, a manual run of the scenario in the dev environment with a real Celery worker.`  
+**`Goal`**`: CSV report export with background generation.`
+**`Context`**`: reports live in reports/, background jobs run on Celery, files are stored in S3. Give a plan first: models, new endpoints, retry logic, what to do with large reports.`
+**`Acceptance criteria`**`: POST /api/reports/{id}/export/ queues a job and returns 202; the finished file is available via a link with a 24-hour lifetime; a repeated request during generation does not create a duplicate.`
+**`Constraints`**`: existing report endpoints unchanged; new dependencies only after approval.`
+**`Verification`**`: pytest reports/, a manual run of the scenario in the dev environment with a real Celery worker.`
 
 The difference is visible in the examples themselves: the simple one has two files and a pattern to follow, and the solution is clear to the engineer before the work starts; in the complex one the solution depends on the outcome of planning and research, and verification includes several stages of manual testing.
 
