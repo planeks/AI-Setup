@@ -48,10 +48,6 @@ explicit `permission_classes` is **public**. Always set it.
 There is no object-level ownership layer — if a view returns per-user data, filter the queryset
 by `request.user` yourself.
 
-`accounts/api/permissions.py` is a dead stub: it imports a non-existent `oxygen` package and
-would raise on import. Nothing references it. Don't import from it; delete it or replace it
-when you first need real permission classes.
-
 ## Settings
 
 Split: `config/settings/base.py` + `dev.py` / `prod.py` / `test.py`, selected by
