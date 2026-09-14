@@ -24,6 +24,11 @@ Each skill is a directory with a `SKILL.md` (YAML frontmatter: `name`, `descript
 | `concise-engineering-output` | Reporting work to engineers — lead with the conclusion |
 | `systematic-debugging` | Diagnosing a bug rather than guessing a patch |
 | `qa-test` | Acting as a manual-QA engineer: enumerate cases for a feature, drive the app in a browser, write and run a durable `pytest-playwright` spec, triage failures. Ships with its own `install.sh` (Playwright MCP + runner venv) — see its `INSTALL.md` |
+| `product-business-analysis` | Answering a product or business question with data-backed evidence and a recommendation |
+| `gather-business-context` | Collecting business/product context from available sources before deeper analysis |
+| `data-scientist` | Statistical analysis, ML modeling, or data-driven business insight work |
+| `spec-miner` | Reverse-engineering specs/docs from an undocumented or legacy codebase |
+| `find-security-vulnerabilities-in-code` | Security-reviewing code or a PR for exploitable vulnerabilities (via the Strix CLI) |
 
 ## Maintenance
 
