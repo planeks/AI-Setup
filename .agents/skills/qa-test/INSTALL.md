@@ -27,9 +27,11 @@ That single run does **three** things:
 1. **Installs the skill** → `~/.claude/skills/qa-test` (symlink by default, so repo
    edits take effect live; `--copy` for a standalone copy). Available in **every**
    project automatically. Any existing install is backed up first.
-2. **Registers the Playwright MCP** at user scope
-   (`claude mcp add --scope user playwright …`) — the Node browser used **only
-   while authoring** specs. It's not a test runner and manages its own browser.
+2. **Registers the Playwright MCP** at user scope, pinned to one release
+   (`claude mcp add --scope user playwright -- npx -y @playwright/mcp@0.0.83`) — the
+   Node browser used **only while authoring** specs. It's not a test runner and manages
+   its own browser. A registration this installer wrote earlier, at another version or
+   at `@latest`, is moved to the pin; one you set up by hand is left alone.
 3. **Builds the test-runner venv** at `~/.qa-test/venv` with `pytest-playwright`
    + Chromium. This one venv runs the Python specs for **every** app, so you never
    install per-app deps. (Specs are black-box — they drive the app over its URL and
@@ -41,18 +43,19 @@ Re-running `./install.sh` is safe and idempotent. Overrides:
 CLAUDE_DIR=/custom ./install.sh     # different ~/.claude
 QA_TEST_HOME=/custom ./install.sh   # different home for the runner venv
 PYTHON=python3.12 ./install.sh      # pick the interpreter for the venv
+PLAYWRIGHT_MCP_VERSION=0.0.84 ./install.sh   # register another Playwright MCP release
 ```
 
 <details>
 <summary>What if I don't want the script to touch my MCP config? Register it by hand.</summary>
 
 ```bash
-claude mcp add --scope user playwright -- npx -y @playwright/mcp@latest
+claude mcp add --scope user playwright -- npx -y @playwright/mcp@0.0.83
 ```
 or edit `~/.claude.json`:
 ```jsonc
 { "mcpServers": { "playwright": { "type": "stdio",
-  "command": "npx", "args": ["-y", "@playwright/mcp@latest"] } } }
+  "command": "npx", "args": ["-y", "@playwright/mcp@0.0.83"] } } }
 ```
 </details>
 
@@ -95,6 +98,24 @@ the dedicated runner:
 ```
 (`--rootdir` keeps pytest from importing the app's own `conftest.py`/plugins.)
 Only invoke `/qa-test` again when the feature changes, or to triage a failure.
+
+## Upgrading the Playwright MCP
+
+`install.sh` registers one exact release, `PLAYWRIGHT_MCP_VERSION` at the top of the
+script, never `@latest`. `@playwright/mcp` is pre-1.0 and each release bundles its own
+Playwright alpha. An unpinned server would therefore change the browser the skill
+drives on every machine whenever upstream publishes: its tools, its flags and its
+accessibility snapshots.
+
+To move to a newer release:
+
+1. Read its release notes for renamed tools and changed flags. The skill drives the
+   browser through them.
+2. Try it on one machine: run `PLAYWRIGHT_MCP_VERSION=<new> ./install.sh`, restart
+   Claude Code, and author one small flow with `/qa-test`.
+3. Bump `PLAYWRIGHT_MCP_VERSION` in `install.sh` and the two commands above in this
+   file. Everyone else picks it up on their next `./install.sh`, which moves the
+   installer's own registration to the new pin.
 
 ## Troubleshooting
 

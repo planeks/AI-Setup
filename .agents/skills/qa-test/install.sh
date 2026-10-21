@@ -17,6 +17,7 @@
 #   CLAUDE_DIR=/custom ./install.sh     # different ~/.claude
 #   QA_TEST_HOME=/custom ./install.sh   # different home for the runner venv
 #   PYTHON=python3.12 ./install.sh      # pick the interpreter for the venv
+#   PLAYWRIGHT_MCP_VERSION=0.0.84 ./install.sh   # register another Playwright MCP release
 #
 set -uo pipefail
 
@@ -27,6 +28,13 @@ DEST="$CLAUDE_DIR/skills/qa-test"
 QA_TEST_HOME="${QA_TEST_HOME:-$HOME/.qa-test}"
 VENV="$QA_TEST_HOME/venv"
 PY="${PYTHON:-python3}"
+# The Playwright MCP release this skill is tested with. @playwright/mcp is pre-1.0 and each
+# release bundles its own Playwright alpha, so "@latest" would change the authoring browser on
+# every machine whenever upstream publishes. Bump it deliberately: see INSTALL.md,
+# "Upgrading the Playwright MCP".
+PLAYWRIGHT_MCP_VERSION="${PLAYWRIGHT_MCP_VERSION:-0.0.83}"
+MCP_PKG="@playwright/mcp@$PLAYWRIGHT_MCP_VERSION"
+MCP_ADD="claude mcp add --scope user playwright -- npx -y $MCP_PKG"
 MODE="symlink"
 [ "${1:-}" = "--copy" ] && MODE="copy"
 
@@ -55,19 +63,41 @@ fi
 # ── 2. the Playwright MCP (authoring browser; needs claude CLI + Node) ───────
 echo
 if have claude; then
-  if claude mcp get playwright >/dev/null 2>&1; then
-    echo "✓ Playwright MCP already registered"
-  elif claude mcp add --scope user playwright -- npx -y @playwright/mcp@latest >/dev/null 2>&1; then
-    echo "✓ Playwright MCP registered (user scope)"
+  if ! registered="$(claude mcp get playwright 2>/dev/null)"; then
+    if claude mcp add --scope user playwright -- npx -y "$MCP_PKG" >/dev/null 2>&1; then
+      echo "✓ Playwright MCP registered (user scope, $MCP_PKG)"
+    else
+      echo "! could not register the Playwright MCP automatically. Run it yourself:"
+      echo "    $MCP_ADD"
+    fi
   else
-    echo "! could not register the Playwright MCP automatically. Run it yourself:"
-    echo "    claude mcp add --scope user playwright -- npx -y @playwright/mcp@latest"
+    command_line="$(printf '%s\n' "$registered" | sed -n 's/^[[:space:]]*Command:[[:space:]]*//p' | head -n 1)"
+    args="$(printf '%s\n' "$registered" | sed -n 's/^[[:space:]]*Args:[[:space:]]*//p' | head -n 1)"
+    if [ "$command_line" = "npx" ] && [ "$args" = "-y $MCP_PKG" ]; then
+      echo "✓ Playwright MCP already registered ($MCP_PKG)"
+    elif [ "$command_line" = "npx" ] && printf '%s' "$args" | grep -Eq '^-y @playwright/mcp@[^[:space:]]+$'; then
+      # This installer's own registration at another version (earlier releases wrote @latest):
+      # move it to the pinned one. A command set up by hand is left alone.
+      if claude mcp remove --scope user playwright >/dev/null 2>&1 \
+         && claude mcp add --scope user playwright -- npx -y "$MCP_PKG" >/dev/null 2>&1; then
+        echo "✓ Playwright MCP re-registered: ${args#-y } → $MCP_PKG"
+      else
+        echo "! could not re-register the Playwright MCP. Run it yourself:"
+        echo "    claude mcp remove --scope user playwright"
+        echo "    $MCP_ADD"
+      fi
+    else
+      echo "• Playwright MCP already registered with your own command — left as it is."
+      echo "  The skill is tested with $MCP_PKG. To switch to it:"
+      echo "    claude mcp remove --scope user playwright"
+      echo "    $MCP_ADD"
+    fi
   fi
   have node || echo "! Node not found — the Playwright MCP needs it. Install Node 18+."
 else
   echo "! 'claude' CLI not found — skipping MCP registration."
   echo "  After installing Claude Code, run:"
-  echo "    claude mcp add --scope user playwright -- npx -y @playwright/mcp@latest"
+  echo "    $MCP_ADD"
 fi
 
 # ── 3. the dedicated test-runner venv (pytest-playwright + Chromium) ─────────
